@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+.env.*
+
+# Local backups / generated files
+*.bak_*
+*.tmp
+*.log
+
+# Generated group daily outputs / private chat data
+GroupDaily/
+chat_history*.txt
+story.private*.json
+*_avatars/
+*.sqlite
+*.db
+*.db-wal
+*.db-shm
+
+# IDE
+.vscode/
+.idea/

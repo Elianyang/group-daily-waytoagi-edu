@@ -1,0 +1,162 @@
+{
+  "name": "group-daily（WaytoAGI-EDU）brand assets",
+  "palette": {
+    "magic_purple": "#6E2EB8",
+    "deep_purple": "#2B104C",
+    "night_violet": "#16072B",
+    "star_gold": "#FFD84D",
+    "warm_cream": "#FFF8E9",
+    "ink_brown": "#2A130C",
+    "edu_blue": "#39B7FF",
+    "blush_pink": "#FF8FA3"
+  },
+  "mascot": "mascot_logo.png",
+  "hero": "mascot_hero.png",
+  "stickers": [
+    {
+      "id": "sticker_01",
+      "file": "sticker_01.png",
+      "label": "今天也要闪闪发光呀",
+      "source_cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "sticker_02",
+      "file": "sticker_02.png",
+      "label": "小脑袋启动",
+      "source_cell": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": "sticker_03",
+      "file": "sticker_03.png",
+      "label": "哇你发现啦",
+      "source_cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "id": "sticker_04",
+      "file": "sticker_04.png",
+      "label": "再试一次就会啦",
+      "source_cell": [
+        3,
+        0
+      ]
+    },
+    {
+      "id": "sticker_05",
+      "file": "sticker_05.png",
+      "label": "不怕错错了也很棒",
+      "source_cell": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "sticker_06",
+      "file": "sticker_06.png",
+      "label": "我陪你一起想",
+      "source_cell": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "sticker_07",
+      "file": "sticker_07.png",
+      "label": "先喝口水再学习",
+      "source_cell": [
+        2,
+        1
+      ]
+    },
+    {
+      "id": "sticker_08",
+      "file": "sticker_08.png",
+      "label": "小鹿老师上线",
+      "source_cell": [
+        3,
+        1
+      ]
+    },
+    {
+      "id": "sticker_09",
+      "file": "sticker_09.png",
+      "label": "你已经进步一点点啦",
+      "source_cell": [
+        0,
+        2
+      ]
+    },
+    {
+      "id": "sticker_10",
+      "file": "sticker_10.png",
+      "label": "给你一颗勇气星星",
+      "source_cell": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "sticker_11",
+      "file": "sticker_11.png",
+      "label": "慢慢来不着急",
+      "source_cell": [
+        2,
+        2
+      ]
+    },
+    {
+      "id": "sticker_12",
+      "file": "sticker_12.png",
+      "label": "这题有点小调皮",
+      "source_cell": [
+        3,
+        2
+      ]
+    },
+    {
+      "id": "sticker_13",
+      "file": "sticker_13.png",
+      "label": "答对啦啵啵鼓掌",
+      "source_cell": [
+        0,
+        3
+      ]
+    },
+    {
+      "id": "sticker_14",
+      "file": "sticker_14.png",
+      "label": "今天的努力收到",
+      "source_cell": [
+        1,
+        3
+      ]
+    },
+    {
+      "id": "sticker_15",
+      "file": "sticker_15.png",
+      "label": "爸爸妈妈也辛苦啦",
+      "source_cell": [
+        2,
+        3
+      ]
+    },
+    {
+      "id": "sticker_16",
+      "file": "sticker_16.png",
+      "label": "学习魔法完成",
+      "source_cell": [
+        3,
+        3
+      ]
+    }
+  ],
+  "watermark": "Co-Created with 进击中的丫丫老师"
+}
