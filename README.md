@@ -356,3 +356,23 @@ A：跑 `vchat stats-top-groups -n 20` 看最活跃的群。也可以跑 `vchat 
 
 **Q：能不能不在 Claude Code 里跑，用脚本一次性出图？**
 A：当前的「故事提炼」环节强依赖 LLM 来读消息、写叙事。如果想完全脚本化，可以接 Claude API 或本地 LLM，但需要改 make_daily.py 增加 LLM 调用。这是 v4 的方向。
+
+## ✦ 进阶互动版：每日总结 / 我的群友 / 聊天记录
+
+除了生成适合转发的 PNG 长图，本专属版还支持生成一个纯本地互动 Dashboard，形态参考“每日总结 + 我的群友 + 聊天记录”的群知识库：
+
+- **每日总结**：查看当天故事线、SOP、Q&A 和数据摘要。
+- **我的群友**：点击正文中的蓝色人名，跳到群友卡片；可搜索成员、角色和自我介绍。
+- **聊天记录**：按发言人分组查看当天发言，适合追某位群友的上下文。
+
+```bash
+python3 scripts/make_daily.py \
+  --story story.json \
+  --chat-log chat_history.txt \
+  --site \
+  --out-dir ./out \
+  --name-suffix _interactive \
+  --no-open
+```
+
+详见 `references/interactive-dashboard.md`。

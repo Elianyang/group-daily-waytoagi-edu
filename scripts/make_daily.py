@@ -1,14 +1,24 @@
 #!/usr/bin/env python3
-"""主编排脚本：吃 story.json，依次跑 头像导出 → HTML 渲染 → PNG 长图。
+"""主编排脚本：吃 story.json，生成 WaytoAGI-EDU 群日报。
+
+默认流程：头像导出 → 品牌化 HTML → PNG 长图。
+进阶流程：加 --site 后，同时生成可交互 Dashboard（每日总结 / 我的群友 / 聊天记录）。
 
 用法（AI 准备好 story.json 后调用）:
     python3 make_daily.py \\
         --story /tmp/story.json \\
         --out-dir ~/Desktop
 
+    python3 make_daily.py \\
+        --story /tmp/story.json \\
+        --chat-log /tmp/chat_history.txt \\
+        --site \\
+        --out-dir ~/Desktop
+
 输出:
     ~/Desktop/群日报_<群名>_<日期>.html
     ~/Desktop/群日报_<群名>_<日期>.png
+    ~/Desktop/群日报_<群名>_<日期>_dashboard.html   # 启用 --site 时
 """
 import argparse
 import json
@@ -75,6 +85,12 @@ def main():
                     help="生成后不自动打开")
     ap.add_argument("--png-height", type=int, default=26000,
                     help="PNG 截图高度上限，WaytoAGI-EDU 专属版默认 26000")
+    ap.add_argument("--site", action="store_true",
+                    help="同时生成互动 Dashboard：每日总结 / 我的群友 / 聊天记录")
+    ap.add_argument("--chat-log", default="",
+                    help="vchat 导出的聊天记录文本；启用 --site 时用于生成群友发言记录")
+    ap.add_argument("--site-out", default="",
+                    help="互动 Dashboard 输出路径；默认随日报文件生成 *_dashboard.html")
     args = ap.parse_args()
 
     story_path = os.path.expanduser(args.story)
@@ -96,6 +112,7 @@ def main():
     stem = f"群日报_{group}_{date}{args.name_suffix}"
     html_path = out_dir / f"{stem}.html"
     png_path = out_dir / f"{stem}.png"
+    site_path = Path(os.path.expanduser(args.site_out)) if args.site_out else out_dir / f"{stem}_dashboard.html"
 
     # 1. 头像
     wxid_map = collect_wxids(story)
@@ -135,13 +152,28 @@ def main():
         "--height", str(args.png_height),
     ])
 
+    # 4. 互动 Dashboard（可选）
+    if args.site:
+        cmd = [
+            sys.executable, str(SCRIPT_DIR / "build_site.py"),
+            "--story", norm_story_path.name,
+            "--out", str(site_path),
+        ]
+        if args.chat_log:
+            cmd.extend(["--chat-log", os.path.expanduser(args.chat_log)])
+        run(cmd)
+
     print(f"\n✅ 生成完成", file=sys.stderr)
-    print(f"   HTML: {html_path}", file=sys.stderr)
-    print(f"   PNG:  {png_path}", file=sys.stderr)
+    print(f"   HTML:      {html_path}", file=sys.stderr)
+    print(f"   PNG:       {png_path}", file=sys.stderr)
+    if args.site:
+        print(f"   Dashboard: {site_path}", file=sys.stderr)
 
     if not args.no_open and sys.platform == "darwin":
         subprocess.run(["open", str(html_path)])
         subprocess.run(["open", str(png_path)])
+        if args.site:
+            subprocess.run(["open", str(site_path)])
 
 
 if __name__ == "__main__":

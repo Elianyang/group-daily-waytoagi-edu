@@ -172,3 +172,27 @@ AI 在分析完聊天记录后，准备一份 story.json 文件喂给 `make_dail
   "wxids": ["wxid_example001", "wxid_example003"]
 }
 ```
+
+## 互动 Dashboard 扩展字段
+
+`group-daily（WaytoAGI-EDU）` 支持在 `story.json` 中补充以下字段，以生成“我的群友”与小鹿贴纸的更稳定体验：
+
+```json
+{
+  "members": [
+    {
+      "name": "吵爷",
+      "role": "诗意技术人",
+      "intro": "WaytoAGI 社区早期成员，关注算法、AI 创作、音乐影像与诗歌。"
+    }
+  ],
+  "brand_stickers": ["sticker_01", "sticker_05", "sticker_09", "sticker_13"]
+}
+```
+
+- `members[].name`：群友显示名。
+- `members[].role` / `members[].tag`：群友角色标签。
+- `members[].intro` / `members[].desc`：群友自我介绍、名片或当天贡献。
+- `brand_stickers`：指定小鹿贴纸 id；不填则按日期和群名自动轮换。
+
+启用互动版时，命令需额外传入 `--site --chat-log <chat_history.txt>`。

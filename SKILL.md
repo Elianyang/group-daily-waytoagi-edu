@@ -391,3 +391,25 @@ story.json 是最珍贵的资产（比 HTML/PNG 更值钱），归档后可以�
 | Chrome 找不到 | 没装 Chrome | 装 Chrome / Chromium |
 | 故事写得像 AI | 没遵循 writing-style.md | 重写，砍掉 AI 套话 + 加节奏感 |
 | 生成挂在 extract_avatars | 数据目录变了 | 设 `VCHAT_DATA_DIR` 或重跑 `sudo vchat setup` |
+
+## 进阶功能：互动 Dashboard（必须优先考虑）
+
+当用户提到“进阶功能”“像截图那样”“能点人名”“我的群友”“聊天记录”“每日总结站点”等需求时，不要只生成 PNG 长图。应在保留长图的同时启用互动 Dashboard：
+
+```bash
+python3 scripts/make_daily.py \
+  --story <story.json> \
+  --chat-log <chat_history.txt> \
+  --site \
+  --out-dir <output_dir> \
+  --name-suffix _interactive \
+  --no-open
+```
+
+Dashboard 需要包含三个核心入口：
+
+- `每日总结`：当天故事线、引用、SOP、Q&A、数据。
+- `我的群友`：群友卡片、角色标签、自我介绍/贡献描述、搜索。
+- `聊天记录`：按发言人分组的当天记录，支持搜索。
+
+交互要求：正文中标蓝的人名必须可点击到群友卡片；群友卡片必须能跳到 TA 的发言记录。所有内容纯本地生成，禁止上传聊天日志。详见 `references/interactive-dashboard.md`。
