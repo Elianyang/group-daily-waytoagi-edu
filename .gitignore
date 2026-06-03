@@ -30,3 +30,6 @@ story.private*.json
 # IDE
 .vscode/
 .idea/
+
+# Generated demo/output files
+output/

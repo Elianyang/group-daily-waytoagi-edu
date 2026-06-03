@@ -1,5 +1,19 @@
 # group-daily（WaytoAGI-EDU）
 
+
+## ✦ 公开使用说明
+
+这个仓库会以 **Public / 公开仓库** 发布。别人可以直接 clone / fork 后使用教育版群日报 Skill，但需要注意：
+
+- ✅ 可以复制代码、模板、README 和示例结构，用于自己的社群日报。
+- ✅ 可以参考 WaytoAGI-EDU 教育版的视觉方向：可爱、手绘、紫金配色、温暖叙事。
+- ✅ 可以使用仓库内的示例图片理解版式效果。
+- ⚠️ 如需在自己的公开项目中继续使用「WaytoAGI-EDU」「进击中的丫丫老师」署名、教育版 logo、小鹿吉祥物或表情包，请保留来源说明，不要冒充官方身份。
+- ❌ 不包含任何微信群原始聊天记录、数据库、缓存或个人隐私数据。
+- ❌ 不建议使用任何可能触发平台风控的微信数据库读取、解密、自动刷新能力作为默认生产流程。
+
+推荐方式是：用户把自己有权处理的群聊素材手动整理到 `input/`，再用 Skill 生成 HTML + PNG。这样别人复制仓库后也可以跑通自己的日报，而不会依赖我们的本地微信环境。
+
 WaytoAGI-EDU 专属群日报技能：把微信群聊素材转化为可阅读、可传播、可沉淀的「故事化群报」HTML + PNG 长图。教育版内置紫金魔法小鹿吉祥物、16 张小鹿表情贴纸、WaytoAGI-EDU 配色，并在每份日报底部自动加入隐约署名 `Co-Created with 进击中的丫丫老师`。
 
 > 它不是普通会议纪要，而是一种面向教育 AI 共创社群的内容产品：把一天的讨论，整理成有情绪、有角色、有主题、有传播感的社群日报。
@@ -80,6 +94,72 @@ WaytoAGI-EDU 专属群日报技能：把微信群聊素材转化为可阅读、�
 
 ---
 
+
+
+## ✦ 快速开始：别人 clone 后怎么用
+
+```bash
+git clone https://github.com/Elianyang/group-daily-waytoagi-edu.git
+cd group-daily-waytoagi-edu
+bash install.sh
+python3 scripts/check_env.py
+```
+
+然后准备一份 `story.json`。你可以先复制仓库内的示例：
+
+```bash
+mkdir -p output
+cp examples/story_waytoagi_edu_demo.json output/story.json
+```
+
+真实使用时，把 `output/story.json` 里的示例群名、故事线、高光人物、Q&A 和金句替换为你自己有权处理的群聊素材。公开版推荐的数据入口是：
+
+```text
+input/
+├── chat_manual_YYYY-MM-DD.txt      # 手动复制/整理的群聊文本，可用于辅助生成 story.json
+├── member_submissions.md           # 群成员主动提交的今日好问题、好资源、金句
+└── screenshots/                    # 可选：少量截图素材，后续可 OCR 后再写入 story.json
+```
+
+生成日报的真实命令：
+
+```bash
+python3 scripts/make_daily.py \
+  --story output/story.json \
+  --out-dir output \
+  --name-suffix _demo \
+  --no-open
+```
+
+脚本会基于 `story.json` 生成 HTML，并尝试导出 PNG。若你的环境暂时没有可用浏览器截图能力，也可以先只查看 HTML，再用浏览器或截图工具导出 PNG。
+
+## ✦ 图片模板与教育版素材
+
+仓库已包含教育版素材和两张经过确认的图片模板，方便别人 clone 后直接查看风格基准：
+
+```text
+assets/
+├── examples/
+│   ├── waytoagi-edu-daily-v5-confirmed.png       # 第一轮确认过的教育版日报长图模板
+│   └── waytoagi-edu-daily-style-confirmed.png    # 后续新风格确认版日报长图模板
+└── waytoagi-edu/
+    ├── mascot_logo.png
+    ├── mascot_hero.png
+    ├── mascot_full.png
+    ├── sticker_01.png ... sticker_16.png
+    └── sticker_sheet.png
+```
+
+这些素材用于说明 2.0 教育版的视觉系统：
+
+- **主视觉**：紫金魔法感 + 教育 AI 社群气质；
+- **字体气质**：避免古板商务风，偏手绘、圆润、亲和；
+- **叙事风格**：把聊天内容写成有角色、有情绪、有重点的社群日报；
+- **品牌规范**：统一使用 `WaytoAGI-EDU`，注意大小写和连字符；
+- **署名规范**：默认保留 `Co-Created with 进击中的丫丫老师`。
+
+> 注意：示例图片只展示排版和风格，不应被理解为包含可复用的真实聊天数据源。公开仓库不会上传原始聊天记录。
+
 ## ✦ 当前推荐使用方式：低风险离线素材模式
 
 由于微信账号存在平台风控与隐私安全边界，本教育版现在推荐使用低风险模式：
@@ -90,6 +170,8 @@ WaytoAGI-EDU 专属群日报技能：把微信群聊素材转化为可阅读、�
 4. Skill 只处理这些用户主动提供的素材，生成 HTML + PNG 日报。
 
 默认不建议在生产环境中继续使用自动读取、解密、刷新微信本地数据库的方式。相关能力可以作为历史技术路线或实验记录存在，但不应作为教育版默认工作流。
+
+对公开使用者来说，这意味着：**复制本仓库即可复用模板、脚本和视觉体系；但数据入口应替换为你自己合法拥有和主动提供的素材。**
 
 ---
 
