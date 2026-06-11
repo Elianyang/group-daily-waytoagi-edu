@@ -1,5 +1,48 @@
 # group-daily（WaytoAGI-EDU）
 
+> 阿里云百炼 CLI Workshop 提交作品：用 `bl text chat` + Agent Skill，把教育社群的手动群聊素材生成 `story.json`，再渲染成 WaytoAGI-EDU 风格的 HTML + PNG 群日报。
+
+## ✦ Workshop 提交摘要
+
+| 项目 | 内容 |
+|---|---|
+| GitHub 仓库 | https://github.com/Elianyang/group-daily-waytoagi-edu |
+| 作品类型 | Agent Skill + 百炼 CLI + 本地渲染脚本 |
+| 使用的百炼 CLI 能力 | `bl text chat`：把手动群聊素材结构化为 `story.json` |
+| 核心产出 | 教育社群故事化日报 HTML + PNG 长图 |
+| 提交稿 | [`WORKSHOP_SUBMISSION.md`](./WORKSHOP_SUBMISSION.md) |
+
+### 一句话介绍
+
+`group-daily（WaytoAGI-EDU）` 是一个面向教育 AI 共创社群的群日报生成器：它不把聊天压成会议纪要，而是把当天的好问题、好观点、好资源和共创瞬间，整理成一份有角色、有情绪、有品牌识别的故事化长图。
+
+### 百炼 CLI 在这里做什么
+
+公开版默认不读取微信数据库，也不上传原始聊天记录。用户把自己有权处理的素材放到 `input/` 后，可以运行：
+
+```bash
+python3 scripts/generate_story_with_bl.py \
+  --chat input/chat_manual_demo.txt \
+  --out output/story.json \
+  --group "WaytoAGI-EDU 情报局" \
+  --date 2026-06-11 \
+  --time-range "09:18 → 20:10"
+```
+
+脚本会调用：
+
+```bash
+bl text chat --messages-file <tmp.json> --output text --non-interactive
+```
+
+生成符合 [`references/story-schema.md`](./references/story-schema.md) 的 `story.json`，再交给 `scripts/make_daily.py` 渲染。
+
+### 效果预览
+
+![WaytoAGI-EDU 群日报效果图](./assets/examples/waytoagi-edu-daily-style-confirmed.png)
+
+---
+
 
 ## ✦ 公开使用说明
 
@@ -105,7 +148,9 @@ bash install.sh
 python3 scripts/check_env.py
 ```
 
-然后准备一份 `story.json`。你可以先复制仓库内的示例：
+### 路径 A：不用百炼 CLI，直接渲染示例 story
+
+你可以先复制仓库内的示例：
 
 ```bash
 mkdir -p output
@@ -132,6 +177,43 @@ python3 scripts/make_daily.py \
 ```
 
 脚本会基于 `story.json` 生成 HTML，并尝试导出 PNG。若你的环境暂时没有可用浏览器截图能力，也可以先只查看 HTML，再用浏览器或截图工具导出 PNG。
+
+### 路径 B：使用百炼 CLI，从手动群聊素材生成 story
+
+先安装并登录阿里云百炼 CLI：
+
+```bash
+npm install -g bailian-cli
+bl auth login --api-key sk-xxxxx
+bl text chat --message "请只回复 OK"
+```
+
+然后用公开示例素材生成 `story.json`：
+
+```bash
+python3 scripts/generate_story_with_bl.py \
+  --chat input/chat_manual_demo.txt \
+  --out output/story.json \
+  --group "WaytoAGI-EDU 情报局" \
+  --date 2026-06-11 \
+  --time-range "09:18 → 20:10"
+```
+
+再渲染 HTML + PNG：
+
+```bash
+python3 scripts/make_daily.py \
+  --story output/story.json \
+  --out-dir output \
+  --name-suffix _workshop \
+  --no-open
+```
+
+这条链路对应 Workshop 的提交重点：
+
+- `bl text chat` 负责把素材整理成结构化日报数据；
+- `SKILL.md` 和 `references/` 负责约束叙事风格、品牌规范和字段契约；
+- `make_daily.py` 负责本地生成可分享的 HTML + PNG。
 
 ## ✦ 图片模板与教育版素材
 

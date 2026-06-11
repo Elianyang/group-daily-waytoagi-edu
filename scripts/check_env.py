@@ -20,6 +20,7 @@ import json
 import os
 import platform
 import shutil
+import subprocess
 from pathlib import Path
 
 
@@ -154,6 +155,44 @@ def check_examples():
     return True
 
 
+def check_bailian_cli():
+    header("阿里云百炼 CLI（可选：自动生成 story.json）")
+    bl = shutil.which("bl")
+    if not bl:
+        warn("未检测到 bl 命令", "如需从群聊素材自动生成 story.json，先运行 npm install -g bailian-cli")
+        return True
+
+    try:
+        version = subprocess.run(
+            [bl, "--version"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        ).stdout.strip()
+        ok("检测到百炼 CLI", detail=version or bl)
+    except Exception as e:
+        warn(f"bl --version 执行失败：{type(e).__name__}: {e}", "确认 Node.js >= 22.12 且 bailian-cli 安装完整")
+        return True
+
+    try:
+        status = subprocess.run(
+            [bl, "auth", "status"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        ).stdout
+        data = json.loads(status)
+        if data.get("authenticated"):
+            ok("百炼认证已配置", detail="可运行 scripts/generate_story_with_bl.py")
+        else:
+            warn("bl 尚未登录", "运行 bl auth login --api-key sk-xxxxx")
+    except Exception as e:
+        warn(f"无法读取 bl auth status：{type(e).__name__}: {e}", "运行 bl auth status 手动确认")
+    return True
+
+
 def check_optional_wechat_stack():
     header("微信自动读取链路（历史高级能力，公开版默认不推荐）")
     vchat = shutil.which("vchat")
@@ -191,6 +230,7 @@ def main():
         check_browser(),
         check_assets(),
         check_examples(),
+        check_bailian_cli(),
         check_optional_wechat_stack(),
     ]
     check_env_vars()
