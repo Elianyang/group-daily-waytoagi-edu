@@ -145,12 +145,20 @@ def main():
     ])
 
     # 3. PNG
-    run([
-        sys.executable, str(SCRIPT_DIR / "html_to_png.py"),
-        "--html", str(html_path),
-        "--out", str(png_path),
-        "--height", str(args.png_height),
-    ])
+    try:
+        run([
+            sys.executable, str(SCRIPT_DIR / "html_to_png.py"),
+            "--html", str(html_path),
+            "--out", str(png_path),
+            "--height", str(args.png_height),
+        ])
+    except subprocess.CalledProcessError as e:
+        raise SystemExit(
+            "PNG 导出失败，但 HTML 已生成，可先打开 HTML 预览或在普通终端重试截图命令。\n"
+            f"HTML: {html_path}\n"
+            f"PNG:  {png_path}\n"
+            f"失败命令: {' '.join(e.cmd)}"
+        )
 
     # 4. 互动 Dashboard（可选）
     if args.site:

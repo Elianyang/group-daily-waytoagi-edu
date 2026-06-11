@@ -25,6 +25,13 @@ GitHub 仓库：<https://github.com/Elianyang/group-daily-waytoagi-edu>
 - 示例结构化日报：`examples/story_waytoagi_edu_demo.json`
 - 效果图：`assets/examples/waytoagi-edu-daily-style-confirmed.png`
 
+彩排验证：
+
+- 环境自检已通过：`python3 scripts/check_env.py`
+- 示例渲染已跑通：`python3 scripts/make_daily.py --story examples/story_waytoagi_edu_demo.json --out-dir output --name-suffix _smoke --no-open`
+- 本地生成 PNG 尺寸：`900×4998`，约 `2MB`
+- `scripts/generate_story_with_bl.py` 已接入 `bl text chat`；实际调用需要百炼账号/API Key 处于可用状态
+
 本地复现命令：
 
 ```bash

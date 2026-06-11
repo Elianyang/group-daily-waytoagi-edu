@@ -12,6 +12,13 @@
 | 核心产出 | 教育社群故事化日报 HTML + PNG 长图 |
 | 提交稿 | [`WORKSHOP_SUBMISSION.md`](./WORKSHOP_SUBMISSION.md) |
 
+### 彩排验证状态
+
+- `python3 scripts/check_env.py`：通过，公开版低风险离线流程就绪。
+- `python3 scripts/make_daily.py --story examples/story_waytoagi_edu_demo.json --out-dir output --name-suffix _smoke --no-open`：通过，已生成示例 HTML + PNG。
+- 输出样例尺寸：`900×4998`，约 `2MB`。
+- `scripts/generate_story_with_bl.py`：代码链路已接入 `bl text chat`；运行时需要百炼账号/API Key 处于正常可用状态。
+
 ### 一句话介绍
 
 `group-daily（WaytoAGI-EDU）` 是一个面向教育 AI 共创社群的群日报生成器：它不把聊天压成会议纪要，而是把当天的好问题、好观点、好资源和共创瞬间，整理成一份有角色、有情绪、有品牌识别的故事化长图。
@@ -187,6 +194,8 @@ npm install -g bailian-cli
 bl auth login --api-key sk-xxxxx
 bl text chat --message "请只回复 OK"
 ```
+
+如果 `bl` 返回 `HTTP 400 (Arrearage)`，说明当前百炼账号额度/账单状态不可用；请到百炼控制台确认额度，或切换可用的 `DASHSCOPE_API_KEY`。
 
 然后用公开示例素材生成 `story.json`：
 

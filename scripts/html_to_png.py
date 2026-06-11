@@ -38,8 +38,18 @@ def shoot(chrome, html_path, png_path, width, height):
         f"--screenshot={png_path}",
         f"file://{os.path.abspath(html_path)}",
     ]
-    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL,
-                   stderr=subprocess.DEVNULL)
+    try:
+        subprocess.run(cmd, check=True, stdout=subprocess.PIPE,
+                       stderr=subprocess.PIPE, text=True)
+    except subprocess.CalledProcessError as e:
+        detail = (e.stderr or e.stdout or "").strip()
+        raise RuntimeError(
+            "Chrome headless 截图失败。若你在沙箱/Agent 环境中运行，请在普通终端重试；"
+            "若是在 macOS 首次运行，请确认 Chrome 有权限启动。\n"
+            f"命令: {' '.join(cmd)}\n"
+            f"返回码: {e.returncode}\n"
+            f"输出: {detail[:1200]}"
+        ) from e
 
 
 
@@ -50,6 +60,25 @@ def _free_port():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.bind(("127.0.0.1", 0))
         return sock.getsockname()[1]
+
+
+def estimate_page_height_from_html(html_path, fallback_height):
+    """在 CDP/本地端口不可用时，根据 HTML 结构保守估算截图高度。"""
+    text = Path(html_path).read_text(encoding="utf-8", errors="ignore")
+    story_count = text.count('class="story"')
+    detail_count = text.count("<details open>")
+    highlight_count = text.count('class="hl"')
+    sop_count = text.count('class="sop"')
+    qa_count = text.count('class="qa"')
+    estimated = (
+        2400
+        + story_count * 820
+        + detail_count * 620
+        + highlight_count * 100
+        + sop_count * 420
+        + qa_count * 460
+    )
+    return max(1600, min(estimated, fallback_height))
 
 
 def _http_json(url, timeout=2):
@@ -296,7 +325,17 @@ def measure_page_height(chrome, html_path, width, fallback_height):
     并连续多次采样，直到高度稳定后才返回。
     """
     import tempfile, time
-    port = _free_port()
+    try:
+        port = _free_port()
+    except OSError as e:
+        estimated = estimate_page_height_from_html(html_path, fallback_height)
+        print(
+            f"  DOM height probe unavailable ({type(e).__name__}: {e}); "
+            f"fallback estimated height {estimated}px",
+            file=sys.stderr,
+        )
+        return estimated
+
     user_data = tempfile.mkdtemp(prefix="group_daily_chrome_")
     url = f"file://{os.path.abspath(html_path)}"
     cmd = [
@@ -373,10 +412,7 @@ def measure_page_height(chrome, html_path, width, fallback_height):
 
         if best <= 1200:
             # 保守兜底：按 HTML 复杂度估算，避免只截页首。
-            text = Path(html_path).read_text(encoding="utf-8", errors="ignore")
-            story_count = text.count('class="story"')
-            detail_count = text.count('<details open>')
-            best = max(best, 2200 + story_count * 760 + detail_count * 620 + text.count('class="hl"') * 90)
+            best = max(best, estimate_page_height_from_html(html_path, fallback_height))
 
         measured = max(1200, min(best + 80, fallback_height))
         if last_info:
@@ -403,14 +439,19 @@ def main():
     png_path = os.path.expanduser(args.out)
     if not os.path.exists(html_path):
         sys.exit(f"HTML 不存在: {html_path}")
-    os.makedirs(os.path.dirname(png_path), exist_ok=True)
+    out_dir = os.path.dirname(png_path)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
 
     chrome = find_chrome()
     measured_height = measure_page_height(chrome, html_path, args.width, args.height)
     if measured_height != args.height:
         print(f"▶ 真实页面高度约 {measured_height}px（上限 {args.height}px）", file=sys.stderr)
     print(f"▶ 用 {chrome} 截图 {args.width}×{measured_height}...", file=sys.stderr)
-    shoot(chrome, html_path, png_path, args.width, measured_height)
+    try:
+        shoot(chrome, html_path, png_path, args.width, measured_height)
+    except RuntimeError as e:
+        sys.exit(str(e))
 
     print(f"▶ 自适应裁底...", file=sys.stderr)
     w, h, bg = trim_bottom(png_path)

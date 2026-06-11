@@ -152,10 +152,19 @@ def run_bl(args: argparse.Namespace, user_prompt: str) -> str:
     except FileNotFoundError:
         raise SystemExit("未找到 bl 命令。请先运行 npm install -g bailian-cli")
     except subprocess.CalledProcessError as e:
+        stderr = e.stderr or ""
+        hint = ""
+        if "Arrearage" in stderr or "overdue-payment" in stderr:
+            hint = (
+                "\n\n提示：百炼返回 Arrearage，通常表示当前阿里云百炼账号欠费、额度不可用，"
+                "或 API Key 所属账号未处于正常服务状态。请到百炼控制台确认额度/账单，"
+                "或换一个可用的 DASHSCOPE_API_KEY 后重试。"
+            )
         raise SystemExit(
             "bl text chat 执行失败。\n"
             f"命令: {' '.join(cmd)}\n"
-            f"stdout:\n{e.stdout}\n\nstderr:\n{e.stderr}"
+            f"stdout:\n{e.stdout}\n\nstderr:\n{stderr}"
+            f"{hint}"
         )
     finally:
         if not args.keep_prompt:
